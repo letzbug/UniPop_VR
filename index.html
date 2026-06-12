@@ -3,30 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>UniPop VR Hub</title>
+
   <link rel="stylesheet" href="style.css" />
   <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
 </head>
+
 <body>
-  <a-scene vr-mode-ui="enabled: true" renderer="antialias: true; colorManagement: true" background="color: #020617">
+  <a-scene
+    vr-mode-ui="enabled: true"
+    renderer="antialias: true; colorManagement: true"
+    background="color: #020617"
+  >
+
     <a-assets>
-      <img id="hub-bg" src="assets/hub-bg.jpg" />
-      <img id="logo" src="assets/logo-unipop.png" />
-      <video id="video-langues" src="videos/langues.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
-      <video id="video-ia" src="videos/ia.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
-      <video id="video-creativite" src="videos/creativite.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
-      <video id="video-bienetre" src="videos/bien-etre.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
-      <video id="video-cuisine" src="videos/cuisine.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+      <video id="video-langues" src="videos/langues.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
+      <video id="video-ia" src="videos/ia.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
+      <video id="video-creativite" src="videos/creativite.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
+      <video id="video-bienetre" src="videos/bien-etre.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
+      <video id="video-cuisine" src="videos/cuisine.mp4" crossorigin="anonymous" playsinline webkit-playsinline preload="auto"></video>
     </a-assets>
+
+    <a-sky id="sky" color="#020617"></a-sky>
+
+    <a-entity id="stars"></a-entity>
+
     <a-entity id="cameraRig">
       <a-camera position="0 1.6 0" look-controls wasd-controls="enabled: false">
-        <a-cursor fuse="true" fuse-timeout="900" color="#ffffff" raycaster="objects: .clickable"></a-cursor>
+        <a-cursor
+          fuse="true"
+          fuse-timeout="900"
+          color="#ffffff"
+          raycaster="objects: .clickable"
+          geometry="primitive: ring; radiusInner: 0.012; radiusOuter: 0.022"
+          material="color: white; shader: flat"
+        ></a-cursor>
       </a-camera>
     </a-entity>
-    <a-sky id="sky" src="#hub-bg" rotation="0 -90 0"></a-sky>
-    <a-entity id="hub"></a-entity>
-    <a-entity id="videoUI" visible="false"></a-entity>
+
+    <a-entity id="hub">
+
+      <a-entity position="0 2.95 -4">
+        <a-text
+          value="UniPop"
+          align="center"
+          color="#ffffff"
+          width="5"
+          font="kelsonsans"
+        ></a-text>
+      </a-entity>
+
+      <a-entity position="0 2.5 -4">
+        <a-text
+          value="Hub immersif 360"
+          align="center"
+          color="#7dd3fc"
+          width="4.5"
+        ></a-text>
+      </a-entity>
+
+      <a-entity position="0 2.12 -4">
+        <a-text
+          value="Choisissez une experience"
+          align="center"
+          color="#c7d2fe"
+          width="4"
+        ></a-text>
+      </a-entity>
+
+      <a-entity class="category clickable" data-video="video-langues" position="-2.35 1.25 -4">
+        <a-rounded-card color="#123c69"></a-rounded-card>
+        <a-text value="Langues" align="center" position="0 0.03 0.04" color="#ffffff" width="4"></a-text>
+      </a-entity>
+
+      <a-entity class="category clickable" data-video="video-ia" position="0 1.25 -4">
+        <a-rounded-card color="#5b21b6"></a-rounded-card>
+        <a-text value="IA" align="center" position="0 0.03 0.04" color="#ffffff" width="4"></a-text>
+      </a-entity>
+
+      <a-entity class="category clickable" data-video="video-creativite" position="2.35 1.25 -4">
+        <a-rounded-card color="#be123c"></a-rounded-card>
+        <a-text value="Creativite" align="center" position="0 0.03 0.04" color="#ffffff" width="4"></a-text>
+      </a-entity>
+
+      <a-entity class="category clickable" data-video="video-bienetre" position="-1.15 0.35 -4">
+        <a-rounded-card color="#047857"></a-rounded-card>
+        <a-text value="Bien-etre" align="center" position="0 0.03 0.04" color="#ffffff" width="4"></a-text>
+      </a-entity>
+
+      <a-entity class="category clickable" data-video="video-cuisine" position="1.15 0.35 -4">
+        <a-rounded-card color="#c2410c"></a-rounded-card>
+        <a-text value="Cuisine" align="center" position="0 0.03 0.04" color="#ffffff" width="4"></a-text>
+      </a-entity>
+
+      <a-entity position="0 -0.55 -4">
+        <a-text
+          value="Regardez une categorie pendant 1 seconde pour lancer la video"
+          align="center"
+          color="#94a3b8"
+          width="4.5"
+        ></a-text>
+      </a-entity>
+
+    </a-entity>
+
+    <a-entity id="videoUI" visible="false">
+      <a-entity id="backButton" class="clickable" position="0 2.65 -3">
+        <a-plane width="2.25" height="0.55" color="#000000" opacity="0.82" material="shader: flat"></a-plane>
+        <a-text value="Retour au Hub" align="center" position="0 0 0.03" color="#ffffff" width="4"></a-text>
+      </a-entity>
+    </a-entity>
+
   </a-scene>
+
   <script src="app.js"></script>
 </body>
 </html>
