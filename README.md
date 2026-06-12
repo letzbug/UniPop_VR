@@ -1,17 +1,27 @@
-# UniPop VR Hub - Bild 2 Version
+# UniPop VR Hub - Pixelgenaue Version
 
-Diese Version nutzt das futuristische Hub-Bild als sichtbaren Hintergrund.
-Darueber liegen unsichtbare Klickzonen auf den 5 Kugeln.
+Diese Version nutzt dein hochgeladenes Bild als exakte Hub-Oberflaeche.
+Darueber liegen unsichtbare Klickzonen auf den Karten.
+
+## Ordnerstruktur
+
+index.html
+style.css
+app.js
+assets/unipop-hub.png
+videos/
 
 ## Videos ersetzen
 
-Kopiere deine Insta360-Videos in den Ordner videos und benenne sie exakt:
+Kopiere deine Insta360-360-Videos in den Ordner videos und benenne sie exakt:
 
 langues.mp4
-ia.mp4
-creativite.mp4
+informatique.mp4
 bien-etre.mp4
+creativite.mp4
+developpement-personnel.mp4
 cuisine.mp4
+culture.mp4
 
 ## GitHub Pages
 
