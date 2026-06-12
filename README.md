@@ -1,24 +1,25 @@
-# UniPop VR Hub
+# UniPop VR Hub 360
 
-## Struktur
+## Dateien
 
 - index.html
 - style.css
 - app.js
+- assets/unipop-hub-bg.png
 - videos/
 
 ## Videos ersetzen
 
-Lege deine 360-Grad-Videos hier ab:
+Ersetze die Platzhalter im Ordner videos durch deine echten Insta360-Exporte:
 
-videos/langues.mp4
-videos/ia.mp4
-videos/creativite.mp4
-videos/bien-etre.mp4
-videos/cuisine.mp4
+- videos/langues.mp4
+- videos/ia.mp4
+- videos/creativite.mp4
+- videos/bien-etre.mp4
+- videos/cuisine.mp4
 
-Die Dateien muessen exakt so heissen.
+Die Namen muessen exakt gleich bleiben.
 
 ## GitHub Pages
 
-Settings -> Pages -> Deploy from branch -> main -> /root
+Settings -> Pages -> Deploy from branch -> main -> /root -> Save
