@@ -1,24 +1,17 @@
-# UniPop VR Hub 360
+# UniPop VR Hub - Bild 2 Version
 
-## Dateien
-
-- index.html
-- style.css
-- app.js
-- assets/unipop-hub-bg.png
-- videos/
+Diese Version nutzt das futuristische Hub-Bild als sichtbaren Hintergrund.
+Darueber liegen unsichtbare Klickzonen auf den 5 Kugeln.
 
 ## Videos ersetzen
 
-Ersetze die Platzhalter im Ordner videos durch deine echten Insta360-Exporte:
+Kopiere deine Insta360-Videos in den Ordner videos und benenne sie exakt:
 
-- videos/langues.mp4
-- videos/ia.mp4
-- videos/creativite.mp4
-- videos/bien-etre.mp4
-- videos/cuisine.mp4
-
-Die Namen muessen exakt gleich bleiben.
+langues.mp4
+ia.mp4
+creativite.mp4
+bien-etre.mp4
+cuisine.mp4
 
 ## GitHub Pages
 
