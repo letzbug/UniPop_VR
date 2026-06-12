@@ -3,11 +3,13 @@
    - erzeugt die 5 Kategorie-Karten im Hub
    - startet beim Klick das passende 360°-Video (Insta360, equirectangular)
    - bringt den Benutzer nach dem Video (oder per Button) zurück zum Hub
+
+   WICHTIG: Diese Datei wird in index.html OHNE "defer" geladen,
+   damit Komponenten & Shader vor der Szene registriert sind.
    ===================================================================== */
 
 /* ------------------ 1. Kategorien konfigurieren ------------------
-   Videodateien gehören nach assets/videos/ (siehe README).
-   Farben orientieren sich am UniPop-Hub-Design.                    */
+   Videodateien gehören nach assets/videos/ (siehe README).         */
 const CATEGORIES = [
   {
     id: 'langues',
@@ -50,16 +52,16 @@ const CATEGORIES = [
 AFRAME.registerComponent('card-hover', {
   init: function () {
     const el = this.el;
-    const baseScale = '1 1 1';
-    const hoverScale = '1.08 1.08 1.08';
 
     el.addEventListener('mouseenter', () => {
-      el.setAttribute('scale', hoverScale);
-      el.querySelector('.card-bg').setAttribute('material', 'emissiveIntensity', 0.55);
+      el.setAttribute('scale', '1.08 1.08 1.08');
+      const bg = el.querySelector('.card-bg');
+      if (bg) bg.setAttribute('material', 'emissiveIntensity', 0.55);
     });
     el.addEventListener('mouseleave', () => {
-      el.setAttribute('scale', baseScale);
-      el.querySelector('.card-bg').setAttribute('material', 'emissiveIntensity', 0.25);
+      el.setAttribute('scale', '1 1 1');
+      const bg = el.querySelector('.card-bg');
+      if (bg) bg.setAttribute('material', 'emissiveIntensity', 0.25);
     });
   }
 });
@@ -67,23 +69,25 @@ AFRAME.registerComponent('card-hover', {
 /* ------------------ 3. Sonnenuntergangs-Himmel (Shader) ------------------ */
 AFRAME.registerShader('sunset-gradient', {
   schema: {},
-  vertexShader: `
-    varying vec3 vWorldPos;
-    void main() {
-      vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }`,
-  fragmentShader: `
-    varying vec3 vWorldPos;
-    void main() {
-      float h = clamp(vWorldPos.y / 40.0, 0.0, 1.0);
-      vec3 horizon = vec3(0.95, 0.55, 0.35);   // warmes Orange am Horizont
-      vec3 mid     = vec3(0.55, 0.30, 0.55);   // Violett-Rosa
-      vec3 top     = vec3(0.08, 0.06, 0.18);   // Dunkles Nachtblau
-      vec3 col = mix(horizon, mid, smoothstep(0.0, 0.35, h));
-      col = mix(col, top, smoothstep(0.30, 0.85, h));
-      gl_FragColor = vec4(col, 1.0);
-    }`
+  vertexShader: [
+    'varying vec3 vWorldPos;',
+    'void main() {',
+    '  vWorldPos = (modelMatrix * vec4(position, 1.0)).xyz;',
+    '  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+    '}'
+  ].join('\n'),
+  fragmentShader: [
+    'varying vec3 vWorldPos;',
+    'void main() {',
+    '  float h = clamp(vWorldPos.y / 40.0, 0.0, 1.0);',
+    '  vec3 horizon = vec3(0.95, 0.55, 0.35);',   // warmes Orange am Horizont
+    '  vec3 mid     = vec3(0.55, 0.30, 0.55);',   // Violett-Rosa
+    '  vec3 top     = vec3(0.08, 0.06, 0.18);',   // Dunkles Nachtblau
+    '  vec3 col = mix(horizon, mid, smoothstep(0.0, 0.35, h));',
+    '  col = mix(col, top, smoothstep(0.30, 0.85, h));',
+    '  gl_FragColor = vec4(col, 1.0);',
+    '}'
+  ].join('\n')
 });
 
 /* ------------------ 4. Hub-Manager (Zustandslogik) ------------------ */
@@ -98,11 +102,18 @@ AFRAME.registerComponent('unipop-hub', {
     this.errorPanel = document.querySelector('#error-panel');
     this.errorText = document.querySelector('#error-text');
 
+    // Mehrzeiligen Text (mit echtem Zeilenumbruch) per JS setzen
+    const info = document.querySelector('#info-line1');
+    if (info) {
+      info.setAttribute('text', 'value', 'Tauche ein in über 1000 Kurse\nin ganz Luxemburg');
+    }
+
     this.buildCards();
 
     // Zurück-Button
-    document.querySelector('#back-button')
-      .addEventListener('click', () => this.returnToHub());
+    const back = document.querySelector('#back-button');
+    back.classList.add('clickable');
+    back.addEventListener('click', () => this.returnToHub());
 
     // Nach Videoende automatisch zurück zum Hub
     this.video.addEventListener('ended', () => this.returnToHub());
@@ -128,24 +139,61 @@ AFRAME.registerComponent('unipop-hub', {
       const x = Math.sin(angleRad) * radius;
       const z = -Math.cos(angleRad) * radius;
 
+      // --- Wurzel der Karte (klickbar) ---
       const card = document.createElement('a-entity');
-      card.setAttribute('position', `${x} 1.85 ${z}`);
-      card.setAttribute('rotation', `0 ${-angleDeg} 0`);   // Karte schaut zum Benutzer
+      card.setAttribute('position', { x: x, y: 1.85, z: z });
+      card.setAttribute('rotation', { x: 0, y: -angleDeg, z: 0 }); // schaut zum Benutzer
       card.setAttribute('card-hover', '');
-      card.setAttribute('class', 'clickable');
+      card.classList.add('clickable');
 
-      card.innerHTML = `
-        <a-plane class="card-bg" width="1.15" height="1.55"
-                 material="color: ${cat.color}; emissive: ${cat.color}; emissiveIntensity: 0.25;
-                           opacity: 0.95; side: double"></a-plane>
-        <a-plane width="1.03" height="0.62" position="0 0.18 0.01"
-                 material="color: #14101e; opacity: 0.55"></a-plane>
-        <a-entity text="value: ${cat.title}; align: center; color: #ffffff; width: 2.4; wrapCount: 16"
-                  position="0 0.58 0.02"></a-entity>
-        <a-entity text="value: ${cat.subtitle.replace(/\n/g, '\\n')}; align: center; color: #f3efff; width: 1.9; wrapCount: 24"
-                  position="0 -0.42 0.02"></a-entity>
-        <a-entity text="value: ▶ Starten; align: center; color: #ffffff; width: 1.6; wrapCount: 14"
-                  position="0 -0.68 0.02"></a-entity>`;
+      // --- Farbiger Hintergrund ---
+      const bg = document.createElement('a-plane');
+      bg.classList.add('card-bg');
+      bg.setAttribute('width', 1.15);
+      bg.setAttribute('height', 1.55);
+      bg.setAttribute('material', {
+        color: cat.color,
+        emissive: cat.color,
+        emissiveIntensity: 0.25,
+        opacity: 0.95,
+        side: 'double'
+      });
+      card.appendChild(bg);
+
+      // --- Dunkles Innenfeld ---
+      const inner = document.createElement('a-plane');
+      inner.setAttribute('width', 1.03);
+      inner.setAttribute('height', 0.62);
+      inner.setAttribute('position', '0 0.18 0.01');
+      inner.setAttribute('material', { color: '#14101e', opacity: 0.55 });
+      card.appendChild(inner);
+
+      // --- Titel ---
+      const title = document.createElement('a-entity');
+      title.setAttribute('position', '0 0.58 0.02');
+      title.setAttribute('text', {
+        value: cat.title, align: 'center', color: '#ffffff',
+        width: 2.4, wrapCount: 16
+      });
+      card.appendChild(title);
+
+      // --- Untertitel (mehrzeilig) ---
+      const sub = document.createElement('a-entity');
+      sub.setAttribute('position', '0 -0.42 0.02');
+      sub.setAttribute('text', {
+        value: cat.subtitle, align: 'center', color: '#f3efff',
+        width: 1.9, wrapCount: 24
+      });
+      card.appendChild(sub);
+
+      // --- "Starten"-Hinweis ---
+      const cta = document.createElement('a-entity');
+      cta.setAttribute('position', '0 -0.68 0.02');
+      cta.setAttribute('text', {
+        value: 'Starten', align: 'center', color: '#ffffff',
+        width: 1.6, wrapCount: 14
+      });
+      card.appendChild(cta);
 
       card.addEventListener('click', () => this.openCategory(cat));
       container.appendChild(card);
@@ -168,7 +216,6 @@ AFRAME.registerComponent('unipop-hub', {
       this.video.removeEventListener('canplay', onReady);
       if (this.state !== 'loading') return;
 
-      // play() muss aus einer Benutzeraktion stammen → hier OK (Klick-Kette)
       this.video.play().then(() => {
         this.state = 'video';
         this.loader.setAttribute('visible', false);
@@ -202,7 +249,8 @@ AFRAME.registerComponent('unipop-hub', {
   /* Karten (de)aktivieren, damit der Laser im Video nichts Unsichtbares trifft */
   setHubClickable: function (on) {
     document.querySelectorAll('#cards > a-entity').forEach(card => {
-      card.setAttribute('class', on ? 'clickable' : '');
+      if (on) { card.classList.add('clickable'); }
+      else    { card.classList.remove('clickable'); }
     });
   },
 
