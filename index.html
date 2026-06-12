@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniPop VR Hub</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+</head>
+<body>
+  <a-scene vr-mode-ui="enabled: true" renderer="antialias: true; colorManagement: true" background="color: #020617">
+    <a-assets>
+      <img id="hub-bg" src="assets/hub-bg.jpg" />
+      <img id="logo" src="assets/logo-unipop.png" />
+      <video id="video-langues" src="videos/langues.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+      <video id="video-ia" src="videos/ia.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+      <video id="video-creativite" src="videos/creativite.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+      <video id="video-bienetre" src="videos/bien-etre.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+      <video id="video-cuisine" src="videos/cuisine.mp4" crossorigin="anonymous" playsinline webkit-playsinline></video>
+    </a-assets>
+    <a-entity id="cameraRig">
+      <a-camera position="0 1.6 0" look-controls wasd-controls="enabled: false">
+        <a-cursor fuse="true" fuse-timeout="900" color="#ffffff" raycaster="objects: .clickable"></a-cursor>
+      </a-camera>
+    </a-entity>
+    <a-sky id="sky" src="#hub-bg" rotation="0 -90 0"></a-sky>
+    <a-entity id="hub"></a-entity>
+    <a-entity id="videoUI" visible="false"></a-entity>
+  </a-scene>
+  <script src="app.js"></script>
+</body>
+</html>
